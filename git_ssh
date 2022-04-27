@@ -1,0 +1,15 @@
+#!/bin/bash
+
+trap 'rm -f /tmp/.git_ssh.$$' 0
+
+if [ "$1" = "-i" ]; then
+    SSH_KEY=$2; shift; shift
+    echo "GIT_TERMINAL_PROMPT=0 ssh -i $SSH_KEY -o StrictHostKeyChecking=no -oBatchMode=yes \$@" > /tmp/.git_ssh.$$
+    chmod +x /tmp/.git_ssh.$$
+    export GIT_SSH=/tmp/.git_ssh.$$
+fi
+
+[ "$1" = "git" ] && shift
+
+# Run the git command
+git "$@"
